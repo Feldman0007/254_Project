@@ -19,9 +19,8 @@ struct Task {
                dueDay = day;
                impact = imp;
                effort = input;
-
-               Task *prev = nullptr;
-               Task *next = nullptr;
+               prev = nullptr;
+               next = nullptr;
           }
      };
 class TaskList {	                  // a doubly linked list
