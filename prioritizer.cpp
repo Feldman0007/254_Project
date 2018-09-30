@@ -3,7 +3,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QInputDialog>
-#include <tasklist.h>  //Include our list
+
 
 
 Prioritizer::Prioritizer(QWidget *parent) :
@@ -21,7 +21,7 @@ Prioritizer::~Prioritizer()
 void Prioritizer::on_AddTask_clicked()
 {
 
-    /*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
+/*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
 
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
 
