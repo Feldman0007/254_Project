@@ -15,6 +15,7 @@ public:
     explicit Prioritizer(QWidget *parent = nullptr);
     ~Prioritizer();
 
+    TaskList taskList;
     void updateListDisplay(TaskList);
 
 private slots:
@@ -22,12 +23,8 @@ private slots:
 
     void on_RemoveTask_clicked();
 
-public:
-    TaskList taskList;
-
 private:
     Ui::Prioritizer *ui;
 };
-
 
 #endif // PRIORITIZER_H
