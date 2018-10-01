@@ -1,5 +1,6 @@
 #include "prioritizer.h"
 #include "ui_prioritizer.h"
+#include "taskList.h"
 #include <QtCore>
 #include <QtGui>
 #include <QInputDialog>
@@ -21,7 +22,7 @@ Prioritizer::~Prioritizer()
 void Prioritizer::on_AddTask_clicked()
 {
 
-/*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
+/*///////////////////////////////////////////////////Get Task Information//////////////////////////////////////////////////////////////////////////////////////////////////*/
 
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
 
@@ -60,27 +61,26 @@ void Prioritizer::on_AddTask_clicked()
 
    string stdString = taskName.toStdString();  //convert taskName from a QString to a string so we can work with it in our list
 
-   Task newTask(stdString, month, day, importance, effort); //Create a new entry in the list
+   Task add(stdString, month, day, importance, effort); //Create a new entry in the list
 
-   taskList.addFront(newTask);
+   mainList.addTask(add);
    updateListDisplay(taskList);   //Update display on the gui
 }
 
 /*////////////////////////////////////////////Remove task then update the display//////////////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_RemoveTask_clicked()
 {
-   if (taskList.empty()){/*If there are no tasks to remove, do nothing*/}
+   if (mainList.size() == 0){/*If there are no tasks to remove, do nothing*/}
    else{
     int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
-        while (choice > taskList.sizeOf() || choice < 1){
+        while (choice > mainList.size() || choice < 1){
             choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
         }  
-        Task* cursor = taskList.front();
         for (int i = 1; i < choice; i++){
-            cursor = cursor->next;
+            mainList.removeFront();
         }
-        taskList.remove(cursor);
-        updateListDisplay(taskList);
+
+        updateListDisplay(mainList);
    }
 }
  /*///////////////////////////////////////////////////Update the list display //////////////////////////////////////////////////////////////////////////////////////////////////*/

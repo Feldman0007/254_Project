@@ -1,6 +1,6 @@
 #ifndef PRIORITIZER_H
 #define PRIORITIZER_H
-#include "tasklist.h"
+#include "taskList.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -15,7 +15,7 @@ public:
     explicit Prioritizer(QWidget *parent = nullptr);
     ~Prioritizer();
 
-    TaskList taskList;
+    TaskList mainList;
     void updateListDisplay(TaskList);
 
 private slots:
