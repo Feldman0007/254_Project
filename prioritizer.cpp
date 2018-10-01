@@ -47,7 +47,7 @@ void Prioritizer::on_AddTask_clicked()
 
    int importance = QInputDialog::getInt(this, "Importance", "Enter the importance of the assignment on a scale of 1-10:");    //Get the level of importance of the assignment
    while (importance < 1 || importance > 10){              //Input validation for assignment impact on grade
-       importance = QInputDialog::getInt(this, "Importance", "Invalid entry, pick a number between 1-10:");
+       importance = QInputDialog::getInt(this, "Importance", "Invalid entry, pick a number between 1-10:");         //Input validation
    }
 
    int effort = QInputDialog::getInt(this, "Effort", "Enter the level of difficulty of the assignment on a scale of 1-10:"); //Get the level of effort require to complete the assignment
@@ -58,7 +58,7 @@ void Prioritizer::on_AddTask_clicked()
 
    /*///////////////////////////////////////////////////Add the Assignment to List and update display/////////////////////////////////////////////////////////////////////////////////////*/
 
-   string stdString = taskName.toStdString();  //This will be used to convert taskName from a QString to a string so we can work with it in our list
+   string stdString = taskName.toStdString();  //convert taskName from a QString to a string so we can work with it in our list
 
    Task newTask(stdString, month, day, importance, effort); //Create a new entry in the list
 
@@ -72,7 +72,7 @@ void Prioritizer::on_RemoveTask_clicked()
    if (taskList.empty()){/*If there are no tasks to remove, do nothing*/}
    else{
     int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
-        while (choice > taskList.sizeOf() || choice < 0){
+        while (choice > taskList.sizeOf() || choice < 1){
             choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
         }  
         Task* cursor = taskList.front();
@@ -82,39 +82,42 @@ void Prioritizer::on_RemoveTask_clicked()
         taskList.remove(cursor);
         updateListDisplay(taskList);
    }
-
 }
  /*///////////////////////////////////////////////////Update the list display //////////////////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::updateListDisplay(TaskList myList){
-
 
     string data; //Will temporarily hold task info as we convert it to a QString so the gui can use it
     QString q_updateText; //Used to update the gui display
 
     Task* cursor = myList.front();
-    while (cursor->next != nullptr){            //Run through the entire list and echo the details of each task to the display
+    while (cursor->next != myList.back()){            //Run through the entire list and echo the details of each task to the display
+
       data = cursor->taskName;                  //Store task data
       q_updateText = QString::fromStdString(data); //convert string to QString so our gui can work with it
       ui->listOutput->appendPlainText(q_updateText); //Add it to the gui display
       q_updateText = "/t";
       ui->listOutput->appendPlainText(q_updateText);
-      data = std::to_string(cursor->dueMonth);       //convert the integer representing the due dates to a string to be used
+
+      data = std::to_string(cursor->dueMonth);       //convert the integer representing the due dates to a string
       data.append("/");                                 //format to MM/DD
       data.append(std::to_string(cursor->dueDay));
       q_updateText = QString::fromStdString(data);   //convert that string to QString so our gui can work with it
       ui->listOutput->appendPlainText(q_updateText);
       q_updateText = "/t";
       ui->listOutput->appendPlainText(q_updateText);
-      data = std::to_string(cursor->impact);            //convert the integer representing the importance  to a string to be used
+
+      data = std::to_string(cursor->impact);            //convert the integer representing the importance  to a string
       q_updateText = QString::fromStdString(data);         //Convert that string to a QString so our gui can work with it
       ui->listOutput->appendPlainText(q_updateText);
       q_updateText = "/t";
       ui->listOutput->appendPlainText(q_updateText);
-      data = std::to_string(cursor->effort);
-      q_updateText = QString::fromStdString(data);
+
+      data = std::to_string(cursor->effort);                //convert the integer representing the effort  to a string
+      q_updateText = QString::fromStdString(data);          //Convert that string to a QString so our gui can work with it
       ui->listOutput->appendPlainText(q_updateText);
       q_updateText = "/n";
       ui->listOutput->appendPlainText(q_updateText);
+
       cursor = cursor->next;                                   //Move the cursor to the next task in the list
         }
 }
