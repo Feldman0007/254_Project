@@ -35,12 +35,38 @@ public:
 class TaskList {
 private:
 	list<Task> tasklist;
+
 public:
 	TaskList();
 
-	void addTask(Task add); // { tasklist.push_front(add); }				//add a Task to the TaskList
-	void removeTask(Task remove);//	{ tasklist.erase(); }	//remove a Task from the TaskList
-	void completeTask(Task complete);// { removeTask(complete); }	//complete a Task (optional)
+	void addTask(Task add) { //add a Task to the TaskList 
+		tasklist.push_front(add);
+	}
+
+	void removeTask(Task remove) {	//remove a Task from the TaskList
+		list<Task>::iterator rm;
+		if rm = tasklist.end() { cout << "Task is not in the list!"; }
+		else { 
+			rm = findTask(remove);
+			tasklist.erase(rm);
+		}
+	}
+	
+	list<Task>::iterator findTask(Task find) {
+		//need a check if it's not in the list
+		list<Task>::iterator notfound = tasklist.end();
+		for(list<Task>::iterator it = tasklist.begin(); it != tasklist.end(); ++it) {
+			if(it->getName() == find.getName()) 
+			{ return it; }
+		}
+		return notfound;
+		
+	}
+
+	void completeTask(Task complete) {
+		removeTask(complete); 
+	}
+
 	void print();												//output the TaskList
 	TaskList prioritize();						//categorize the TaskList by user option
 		//menu driven(1 = name, 2 = date, etc.)
