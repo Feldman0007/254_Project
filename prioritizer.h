@@ -1,6 +1,6 @@
 #ifndef PRIORITIZER_H
 #define PRIORITIZER_H
-#include "tasklist.hpp"
+#include "tasklist.h"
 #include <QMainWindow>
 
 namespace Ui {
