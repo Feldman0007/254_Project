@@ -1,6 +1,4 @@
 #pragma once
-#ifndef TASKLIST_H
-#define TASKLIST_H
 
 #include<iostream>
 #include<string>
@@ -82,6 +80,4 @@ public:
           //menu driven(1 = name, 2 = date, etc.)
      
 };
-
-#endif // TASKLIST_H
 
