@@ -1,6 +1,6 @@
 #include "prioritizer.h"
 #include "ui_prioritizer.h"
-#include "taskList.hpp"
+#include "tasklist.hpp"
 #include <QtCore>
 #include <QtGui>
 #include <QInputDialog>
