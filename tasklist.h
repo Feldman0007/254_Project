@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TASKLIST_H
+#define TASKLIST_H
 
 #include<iostream>
 #include<string>
@@ -81,3 +83,4 @@ public:
      
 };
 
+#endif
