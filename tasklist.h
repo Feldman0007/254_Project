@@ -1,86 +1,33 @@
-#pragma once
 #ifndef TASKLIST_H
 #define TASKLIST_H
+#include "taskentry.h"
 
-#include<iostream>
-#include<string>
-#include<list>
-#include<iterator>
-using namespace std;
+#include <QObject>
+#include <QList>
 
-
-struct Date {
-     int month, day;
-
-     Date(int mo, int dy) : month(mo), day(dy) {}
-};
-
-class Task {
-private: 
-     string tname;
-     Date dueDate;
-     int percentage, difficulty;
-
+//The list of tasks
+class TaskList : public QObject
+{
+    Q_OBJECT
 public:
-     Task(string t, int dm, int dd, int per, int diff)
-          : tname(t), percentage(per), difficulty(diff), dueDate(dm, dd) {}
-     
-     // Accessor Functions
-     string getName() { return tname; }
-     Date getDueDate() { return dueDate; }
-     int getPercentage() { return percentage; }
-     int getDifficulty() { return difficulty; }
+    //Alias for QT list class of task pointers
+    typedef QList<TaskEntry*> ToDoList;
 
-     //  Mutator Functions
-     // Do we want to allow them to edit a tasklist?
+    explicit TaskList(QObject *parent = nullptr);
+    ToDoList getTDL() const;
 
-};
+    TaskEntry* createTask();
+    bool deleteTask(TaskEntry *task);
 
-class TaskList {
+signals:
+    //Alerts when tasks are added or removed
+    void entryAdded(TaskEntry *task);
+    void entryRemoved(TaskEntry *task);
+
+public slots:
+
 private:
-     list<Task> tl;
-
-public:
-     TaskList();
-
-     int lsize() {
-          return tl.size();
-     }
-
-     void addTask(Task add) { //add a Task to the TaskList 
-          tl.push_front(add);
-     }
-     void removeFront() {
-          tl.pop_front();
-     }
-     void removeTask(Task remove) {     //remove a Task from the TaskList
-          list<Task>::iterator rm;
-          if(rm == tl.end()) { cout << "Task is not in the list!"; }
-          else { 
-               rm = findTask(remove);
-               tl.erase(rm);
-          }
-     }
-     
-     list<Task>::iterator findTask(Task find) {
-          //need a check if it's not in the list
-          list<Task>::iterator notfound = tl.end();
-          for(list<Task>::iterator it = tl.begin(); it != tl.end(); ++it) {
-               if(it->getName() == find.getName()) 
-               { return it; }
-          }
-          return notfound;
-          
-     }
-
-     void completeTask(Task complete) {
-          removeTask(complete); 
-     }
-
-     void print();                                                         //output the TaskList
-     TaskList prioritize();                            //categorize the TaskList by user option
-          //menu driven(1 = name, 2 = date, etc.)
-     
+    ToDoList _list;
 };
 
-#endif
+#endif // TASKLIST_H
