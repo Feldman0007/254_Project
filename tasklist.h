@@ -19,6 +19,7 @@ public:
     TaskEntry* createTask();
     bool deleteTask(TaskEntry *task);
 
+    void prioritizeDate();
 signals:
     //Alerts when tasks are added or removed
     void entryAdded(TaskEntry *task);

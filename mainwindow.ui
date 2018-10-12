@@ -18,47 +18,57 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="listPage">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QListWidget" name="listWidget"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="fullLabel">
+          <property name="text">
+           <string>Your Main To Do List:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="sortedpage">
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="2" column="0">
+         <widget class="QPushButton" name="returnMenu">
+          <property name="text">
+           <string>Return to Main List</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QListWidget" name="sortedWidget"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="organizedLabel">
+          <property name="text">
+           <string>Your Organized List:</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="detailpage">
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Task Name</string>
+        <item row="4" column="0" colspan="2">
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
+          </property>
+          <property name="centerButtons">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
          <widget class="QLineEdit" name="nameEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Due Date</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QDateEdit" name="dateEdit">
-          <property name="inputMethodHints">
-           <set>Qt::ImhPreferNumbers</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Percentage</string>
-          </property>
-         </widget>
         </item>
         <item row="2" column="1">
          <widget class="QSpinBox" name="percentEdit">
@@ -70,24 +80,61 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="diffEdit">
+          <property name="maximum">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="taskAdd">
+          <property name="text">
+           <string>Task Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="dateAdd">
+          <property name="text">
+           <string>Due Date</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="perAdd">
+          <property name="text">
+           <string>Percent of Grade</string>
+          </property>
+         </widget>
+        </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="diffAdd">
           <property name="text">
            <string>Difficulty</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QSpinBox" name="diffEdit">
-          <property name="maximum">
-           <number>11</number>
+        <item row="1" column="1">
+         <widget class="QDateEdit" name="dateEdit">
+          <property name="inputMethodHints">
+           <set>Qt::ImhPreferNumbers</set>
           </property>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="2">
-         <widget class="QDialogButtonBox" name="actionButton">
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Discard|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::MonthSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>MMMM dd yyyy</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+          <property name="date">
+           <date>
+            <year>2018</year>
+            <month>1</month>
+            <day>2</day>
+           </date>
           </property>
          </widget>
         </item>
@@ -110,9 +157,18 @@
     <property name="title">
      <string>ToDoList</string>
     </property>
+    <widget class="QMenu" name="menuPrioritze_by">
+     <property name="title">
+      <string>Prioritze by...</string>
+     </property>
+     <addaction name="actionDue_Date"/>
+     <addaction name="actionPercent"/>
+     <addaction name="actionDiff"/>
+    </widget>
     <addaction name="actionAdd"/>
     <addaction name="actionEdit"/>
     <addaction name="actionComplete_Remove"/>
+    <addaction name="menuPrioritze_by"/>
    </widget>
    <addaction name="menuToDoList"/>
   </widget>
@@ -138,6 +194,31 @@
   <action name="actionComplete_Remove">
    <property name="text">
     <string>Complete/Remove</string>
+   </property>
+  </action>
+  <action name="actionPrioritize_Percent">
+   <property name="text">
+    <string>Prioritize by Percentage</string>
+   </property>
+  </action>
+  <action name="actionPrioritize_Diff">
+   <property name="text">
+    <string>Prioritize by Difficulty</string>
+   </property>
+  </action>
+  <action name="actionDue_Date">
+   <property name="text">
+    <string>Due Date</string>
+   </property>
+  </action>
+  <action name="actionPercent">
+   <property name="text">
+    <string>Percent of Grade</string>
+   </property>
+  </action>
+  <action name="actionDiff">
+   <property name="text">
+    <string>Difficulty</string>
    </property>
   </action>
  </widget>

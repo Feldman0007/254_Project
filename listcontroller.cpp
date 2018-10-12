@@ -12,7 +12,9 @@ TaskEntry *listcontroller::createEntry()
 {
     auto result = controller->createTask();
     if(result != nullptr) {
-        result->setName(tr("New entry..."));
+        result->setName(tr("I'm a new entry. Edit me!"));
+
+
     }
     return result;
 }

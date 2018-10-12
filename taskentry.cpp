@@ -31,7 +31,7 @@ int TaskEntry::getPercent() const
     return percent;
 }
 
-void TaskEntry::setPercent(int value)
+void TaskEntry::setPercent(const int &value)
 {
     percent = value;
 }
@@ -41,7 +41,7 @@ int TaskEntry::getDiff() const
     return diff;
 }
 
-void TaskEntry::setDiff(int value)
+void TaskEntry::setDiff(const int &value)
 {
     diff = value;
 }

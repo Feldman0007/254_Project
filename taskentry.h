@@ -23,10 +23,10 @@ public:
     void setDue(const QDate &value);
 
     int getPercent() const;
-    void setPercent(int value);
+    void setPercent(const int &value);
 
     int getDiff() const;
-    void setDiff(int value);
+    void setDiff(const int &value);
 
 signals:
     //Alert is made when a variable is updated

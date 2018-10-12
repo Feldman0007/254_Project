@@ -32,3 +32,13 @@ bool TaskList::deleteTask(TaskEntry *task)
     return false;
 }
 
+void TaskList::prioritizeDate() {
+    for(int i = 0; i < _list.size(); i++) {
+        for(int j = 0; j < _list.size()-i-1; i++) {
+            if(_list.at(j)->getDue() > _list.at(j+1)->getDue()) {
+                _list.swap(j, j+1);
+            }
+        }
+    }
+}
+
