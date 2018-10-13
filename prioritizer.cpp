@@ -20,9 +20,7 @@ Prioritizer::~Prioritizer()
 
 void Prioritizer::on_AddTask_clicked()
 {
-
 /*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
-
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
 
    int month =  QInputDialog::getInt(this, "Due Date", "Enter the month it's due (MM):");                      //Get the month of the assignment's due date
@@ -44,7 +42,6 @@ void Prioritizer::on_AddTask_clicked()
     }
  }
 
-
    int importance = QInputDialog::getInt(this, "Importance", "Enter the importance of the assignment on a scale of 1-10:");    //Get the level of importance of the assignment
    while (importance < 1 || importance > 10){              //Input validation for assignment impact on grade
        importance = QInputDialog::getInt(this, "Importance", "Invalid entry, pick a number between 1-10:");         //Input validation
@@ -62,8 +59,8 @@ void Prioritizer::on_AddTask_clicked()
 
    Task newTask(stdString, month, day, importance, effort); //Create a new entry in the list
 
-   taskList.addFront(newTask);
-   updateListDisplay(taskList);   //Update display on the gui
+   taskList.push_back(newTask);
+   updateListDisplay();   //Update display on the gui
 }
 
 /*////////////////////////////////////////////Remove task then update the display//////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -72,52 +69,169 @@ void Prioritizer::on_RemoveTask_clicked()
    if (taskList.empty()){/*If there are no tasks to remove, do nothing*/}
    else{
     int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
-        while (choice > taskList.sizeOf() || choice < 1){
+    while (unsigned(choice) > taskList.size() || choice < 1){
             choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
-        }  
-        Task* cursor = taskList.front();
-        for (int i = 1; i < choice; i++){
-            cursor = cursor->next;
         }
-        taskList.remove(cursor);
-        updateListDisplay(taskList);
+        cursor = taskList.begin();
+        for (int taskNum = 1;  taskNum != choice; taskNum++ ){
+           cursor++;
+        }
+        taskList.erase(cursor);
+        updateListDisplay();
    }
 }
  /*///////////////////////////////////////////////////Update the list display //////////////////////////////////////////////////////////////////////////////////////////////////*/
-void Prioritizer::updateListDisplay(TaskList myList){
+void Prioritizer::updateListDisplay(){
+    ui->taskOutput->clear(); //Refresh the list output
+    ui->dateOutput->clear();
+    ui->importanceOutput->clear();
+    ui->difficultyOutput->clear();
+    ui->taskOutput->setAlignment(Qt::AlignCenter);
+    ui->dateOutput->setAlignment(Qt::AlignCenter);
+    ui->importanceOutput->setAlignment(Qt::AlignCenter);
+    ui->difficultyOutput->setAlignment(Qt::AlignCenter);
+    ui->taskOutput->append("Task");                 //  Place Headings
+    ui->dateOutput->append("Due Date");
+    ui->importanceOutput->append("Importance");
+    ui->difficultyOutput->append("Difficulty");
 
-    string data; //Will temporarily hold task info as we convert it to a QString so the gui can use it
+    ui->taskOutput->setAlignment(Qt::AlignLeft);
+
+    string output; //Will temporarily hold info to be converted to QString in order to display
     QString q_updateText; //Used to update the gui display
 
-    Task* cursor = myList.front();
-    while (cursor->next != myList.back()){            //Run through the entire list and echo the details of each task to the display
+   cursor = taskList.begin();
+   int taskNumber = 1;
+   while (cursor != taskList.end()){            //Run through the entire list and echo the details of each task to the display
 
-      data = cursor->taskName;                  //Store task data
-      q_updateText = QString::fromStdString(data); //convert string to QString so our gui can work with it
-      ui->listOutput->appendPlainText(q_updateText); //Add it to the gui display
-      q_updateText = "/t";
-      ui->listOutput->appendPlainText(q_updateText);
+      output = std::to_string(taskNumber);   //Display the task number
+      output.append(". ");
+      output.append(cursor->taskName);
+      q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
+      ui->taskOutput->append(q_updateText);
 
-      data = std::to_string(cursor->dueMonth);       //convert the integer representing the due dates to a string
-      data.append("/");                                 //format to MM/DD
-      data.append(std::to_string(cursor->dueDay));
-      q_updateText = QString::fromStdString(data);   //convert that string to QString so our gui can work with it
-      ui->listOutput->appendPlainText(q_updateText);
-      q_updateText = "/t";
-      ui->listOutput->appendPlainText(q_updateText);
+      output = std::to_string(cursor->dueMonth);
+      output.append("/");
+      output.append(std::to_string(cursor->dueDay));       //convert the integer representing the due dates to a string
+      q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
+      ui->dateOutput->append(q_updateText);
 
-      data = std::to_string(cursor->impact);            //convert the integer representing the importance  to a string
-      q_updateText = QString::fromStdString(data);         //Convert that string to a QString so our gui can work with it
-      ui->listOutput->appendPlainText(q_updateText);
-      q_updateText = "/t";
-      ui->listOutput->appendPlainText(q_updateText);
+      output = std::to_string(cursor->impact);
+      q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
+      ui->importanceOutput->append(q_updateText);
 
-      data = std::to_string(cursor->effort);                //convert the integer representing the effort  to a string
-      q_updateText = QString::fromStdString(data);          //Convert that string to a QString so our gui can work with it
-      ui->listOutput->appendPlainText(q_updateText);
-      q_updateText = "/n";
-      ui->listOutput->appendPlainText(q_updateText);
+      output = std::to_string(cursor->effort);
+      q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
+      ui->difficultyOutput->append(q_updateText); //Add it to the gui display
 
-      cursor = cursor->next;                                   //Move the cursor to the next task in the list
+      cursor++;                                   //Move the cursor to the next task in the list
+      taskNumber++;
+   }
+}
+
+void Prioritizer::sortList(int choice)
+{
+    list<Task> tempList; //will be used to temporarily hold the reorganized the list
+    list<Task>::iterator target; //we are targeting the task w/ the desired priority
+
+    switch(choice){
+    case 1:
+      while(!taskList.empty()){
+        target = taskList.begin();
+        for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
+            if(target->dueMonth == cursor->dueMonth){ //If they have the same due month
+                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent day
+                    target = cursor;
+                }
+                else if(target->impact < cursor->impact){ //if the duedates are the same proritize based on importance
+                    target = cursor;
+                }
+            }
+            else if(target->dueMonth > cursor->dueMonth){
+                target = cursor;
+            }
         }
+        Task temp;
+        temp.taskName = target->taskName;
+        temp.dueMonth = target->dueMonth;
+        temp.dueDay = target->dueDay;
+        temp.impact = target->impact;
+        temp.effort = target->effort;
+        tempList.push_back(temp);
+        taskList.erase(target);
+       }
+     taskList = tempList;
+     tempList.clear();
+        break;
+    case 2:
+        while(!taskList.empty()){
+          target = taskList.begin();
+          for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
+              if(target->impact == cursor->impact){  //If their difficulty is equal
+                  if(target->dueMonth == cursor->dueMonth){  //Check which has a more immediate due date
+                      if(target->dueDay > cursor->dueDay){
+                          target = cursor;
+                      }
+                   }
+                  else if(target->dueMonth > cursor->dueMonth){
+                      target = cursor;
+                  }
+              }
+              else if(target->impact < cursor->impact){
+                  target = cursor;
+              }
+          }
+          Task temp;
+          temp.taskName = target->taskName;
+          temp.dueMonth = target->dueMonth;
+          temp.dueDay = target->dueDay;
+          temp.impact = target->impact;
+          temp.effort = target->effort;
+          tempList.push_back(temp);
+          taskList.erase(target);
+       }
+       taskList = tempList;
+       tempList.clear();
+       break;
+    case 3:
+       while(!taskList.empty()){
+         target = taskList.begin();
+         for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
+             if(target->effort == cursor->effort){  //If their difficulty is equal
+                 if(target->dueMonth == cursor->dueMonth){  //Check which has a more immediate due date
+                     if(target->dueDay > cursor->dueDay){
+                         target = cursor;
+                     }
+                  }
+                 else if(target->dueMonth > cursor->dueMonth){
+                     target = cursor;
+                 }
+             }
+             else if(target->effort < cursor->effort){
+                 target = cursor;
+             }
+         }
+         Task temp;
+         temp.taskName = target->taskName;
+         temp.dueMonth = target->dueMonth;
+         temp.dueDay = target->dueDay;
+         temp.impact = target->impact;
+         temp.effort = target->effort;
+         tempList.push_back(temp);
+         taskList.erase(target);
+      }
+      taskList = tempList;
+      tempList.clear();
+      break;
+    }
+}
+
+void Prioritizer::on_SortList_clicked()
+{
+   int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1. by Due Date; 2. by Importance; 3. by Difficulty");
+   while (choice > 3 || choice < 1){
+     choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Invalid Entry. Try Entering: 1 for Due Date; 2 for Importance; 3 for Difficulty");
+   }
+   sortList(choice);
+   updateListDisplay();
 }
