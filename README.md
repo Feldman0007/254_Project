@@ -14,7 +14,7 @@ Alexander Feldman: feldman0007@csu.fullerton.edu
 > We want our product to be freely accessible for all types of audiences, therefore are offering our product as open source. We supported the Open Source cause by integrating other open source software, such as QT. QT is a cross-platform IDE and design tool that helps programmers build frontend implementations with ease. The Prioritizer utilizes its UI features to help build a easy to use interface for our users.
 
 ### Licensing
-> QT5 software and libraries were primarily used to develop our project, which are licensed under the GPL and LGPLv3 license, so our project must be published under the same license as they are derivative works of this software.
+> QT5 software and libraries were primarily used to develop our project, which are licensed under the GPL and LGPLv3 license, so our project must be published under the same license as it is a derivative work of this software.
 
 ### Build Compatibility
 > Our application runs on Windows + Linux.
