@@ -5,6 +5,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <fstream>
+#include <sstream>
 
 
 
@@ -24,7 +25,6 @@ void Prioritizer::on_AddTask_clicked()
 {
 /*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
-
    int month =  QInputDialog::getInt(this, "Due Date", "Enter the month it's due (MM):");                      //Get the month of the assignment's due date
    while (month > 12 || month < 1){
        month =  QInputDialog::getInt(this, "Due Date", "Invalid entry. Retry inputing the month it's due (MM):");     //Input validation
@@ -70,18 +70,23 @@ void Prioritizer::on_AddTask_clicked()
 void Prioritizer::on_RemoveTask_clicked()
 {
    if (taskList.empty()){/*If there are no tasks to remove, do nothing*/}
-   else{
-    int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
-    while (unsigned(choice) > taskList.size() || choice < 1){
-            choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
+   else
+   {
+        int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
+        while (unsigned(choice) > taskList.size() || choice < 1)
+        {
+             choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
         }
         cursor = taskList.begin();
-        for (int taskNum = 1;  taskNum != choice; taskNum++ ){
+        for (int taskNum = 1;  taskNum != choice; taskNum++ )
+        {
            cursor++;
         }
         taskList.erase(cursor);
-        if (taskList.empty()){
-            save_the_file = false; //If the list is empty, we can safetly start a new file without worrying about saving work
+        save_the_file = true;
+        if (taskList.empty())
+        {
+            save_the_file = false; //If the list is empty, we can safely start a new file without worrying about saving work
         }
         updateListDisplay();
    }
@@ -92,7 +97,7 @@ void Prioritizer::updateListDisplay(){
     ui->dateOutput->clear();
     ui->importanceOutput->clear();
     ui->difficultyOutput->clear();
-    ui->taskOutput->setAlignment(Qt::AlignCenter);
+    ui->taskOutput->setAlignment(Qt::AlignLeft);
     ui->dateOutput->setAlignment(Qt::AlignCenter);
     ui->importanceOutput->setAlignment(Qt::AlignCenter);
     ui->difficultyOutput->setAlignment(Qt::AlignCenter);
@@ -100,8 +105,6 @@ void Prioritizer::updateListDisplay(){
     ui->dateOutput->append("Due Date");
     ui->importanceOutput->append("Importance");
     ui->difficultyOutput->append("Difficulty");
-
-    ui->taskOutput->setAlignment(Qt::AlignLeft);
 
     string output; //Will temporarily hold info to be converted to QString in order to display
     QString q_updateText; //Used to update the gui display
@@ -126,7 +129,7 @@ void Prioritizer::updateListDisplay(){
       q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
       ui->importanceOutput->append(q_updateText);
 
-      output = std::to_string(cursor->effort);
+      output = std::to_string(cursor->difficulty);
       q_updateText = QString::fromStdString(output); //convert string to QString so our gui can work with it
       ui->difficultyOutput->append(q_updateText); //Add it to the gui display
 
@@ -146,7 +149,7 @@ void Prioritizer::sortList(int choice)
         target = taskList.begin();
         for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
             if(target->dueMonth == cursor->dueMonth){ //If they have the same due month
-                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent day
+                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent due day
                     target = cursor;
                 }
                 else if(target->impact < cursor->impact){ //if the duedates are the same proritize based on importance
@@ -162,7 +165,7 @@ void Prioritizer::sortList(int choice)
         temp.dueMonth = target->dueMonth;
         temp.dueDay = target->dueDay;
         temp.impact = target->impact;
-        temp.effort = target->effort;
+        temp.difficulty = target->difficulty;
         tempList.push_back(temp);
         taskList.erase(target);
        }
@@ -192,7 +195,7 @@ void Prioritizer::sortList(int choice)
           temp.dueMonth = target->dueMonth;
           temp.dueDay = target->dueDay;
           temp.impact = target->impact;
-          temp.effort = target->effort;
+          temp.difficulty = target->difficulty;
           tempList.push_back(temp);
           taskList.erase(target);
        }
@@ -203,7 +206,7 @@ void Prioritizer::sortList(int choice)
        while(!taskList.empty()){
          target = taskList.begin();
          for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
-             if(target->effort == cursor->effort){  //If their difficulty is equal
+             if(target->difficulty == cursor->difficulty){  //If their difficulty is equal
                  if(target->dueMonth == cursor->dueMonth){  //Check which has a more immediate due date
                      if(target->dueDay > cursor->dueDay){
                          target = cursor;
@@ -213,7 +216,7 @@ void Prioritizer::sortList(int choice)
                      target = cursor;
                  }
              }
-             else if(target->effort < cursor->effort){
+             else if(target->difficulty < cursor->difficulty){
                  target = cursor;
              }
          }
@@ -222,7 +225,7 @@ void Prioritizer::sortList(int choice)
          temp.dueMonth = target->dueMonth;
          temp.dueDay = target->dueDay;
          temp.impact = target->impact;
-         temp.effort = target->effort;
+         temp.difficulty = target->difficulty;
          tempList.push_back(temp);
          taskList.erase(target);
       }
@@ -325,54 +328,68 @@ void Prioritizer::on_actionLoad_triggered()
     }
 }
 
+
 void Prioritizer::on_actionNew_triggered()
 {
-    if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before creating the new file
-    {
-         int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
-         while (choice > 3 || choice < 1)
-         {
-            choice = QInputDialog::getInt(this, "Current changes have not been saved", "Invalid Entry. Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
-         }
-         if(choice == 1){
-            on_actionSave_triggered(); // Save current changes
-         }
-         else if(choice == 3){ // Cancel creating a new file
-           return;
-         }
-         save_the_file = false; //continue without saving changes
-    }
-
-    bool filenameOccupied = true; //used to see if the selected filename is already an existing file
+    bool filenameOccupied = false; //used as a flag to see if the selected filename is already an existing file
 
     fstream newFile;
     QString Qfilename;
     string filename;
-    while(filenameOccupied)
+
+
+    const QString null = "";//ok and null are used to handle the user pressing cancel on the create new file dialog box                            \/
+    bool ok;
+
+    while(!filenameOccupied)
     {
-        bool ok;
-        const QString null = "";
-        Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,null,&ok); //prompt user to name new file
-      if (ok){
+      Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,null,&ok); //prompt user to name new file
+      if (ok) // If user does not hit cancel continue
+      {
         filename = Qfilename.toStdString(); //fstream works with std::string so we must convert it
-        filename.append(".txt");
-
-        newFile.open(filename, ios::in | ios::out);
-        if (newFile.is_open()) //if file opened successfully, then it exists and we do not want to overwrite file contents.
+        newFile.open(filename, ios::app);
+        if (newFile.is_open())
         {
-            QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
-            newFile.close();       
+            newFile.clear();
+            newFile.seekg(0, ios::end);
+            if (newFile.tellg() == 0)    //if file opened successfully and is empty file, proceed to create new file
+            {
+                newFile.close();
+                newFile.open(filename, ios::out | ios::trunc);
+                if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before creating the new file
+                {
+                     int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+                     while (choice > 3 || choice < 1)
+                     {
+                        choice = QInputDialog::getInt(this, "Current changes have not been saved", "Invalid Entry. Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+                     }
+                     if(choice == 1){
+                        on_actionSave_triggered(); // Save current changes
+                     }
+                     else if(choice == 3){ // Cancel creating a new file
+                       return;
+                     }
+                     save_the_file = false; //continue without saving changes
+                }
+                currentFileName = Qfilename; //update current working file.
+                taskList.clear(); //Clear contents of the current list
+                updateListDisplay(); // clear the display
+                filenameOccupied = true;
+                newFile.close();
+            }
+            else // else it exists and we do not want to overwrite file contents.
+            {
+              QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
+            }
         }
-        else{
-            newFile.open(filename, ios::out | ios::trunc); //if file failed to open, it does not exist and we can create a new file using the given filename
-            taskList.clear(); //Clear contents of the current list
-            updateListDisplay(); // clear the screen
-            filenameOccupied = false;
-            newFile.close();
-
+        else
+        {
+            QMessageBox::information(this, "file error", "Error opening file!");
+            return;
         }
-        }
-      else{
+      }
+      else //Else if user hits cancel, back out of the create new file menu
+      {
           return;
       }
    }
@@ -380,5 +397,86 @@ void Prioritizer::on_actionNew_triggered()
 
 void Prioritizer::on_actionSave_triggered()
 {
+    fstream newFile;
+    QString Qfilename;
+    string filename;
 
+    bool ok;
+    const QString null = "";//ok and null are used to handle the user pressing cancel on the create new file dialog box                            \/
+
+    Qfilename = QInputDialog::getText(this, "Save file", "Enter the filename of this save", QLineEdit::Normal, currentFileName,&ok); //prompt user to name new file
+    if (ok) // If user does not hit cancel continue
+    {
+        filename = Qfilename.toStdString(); //fstream works with std::string so we must convert it
+
+        newFile.open(filename, ios::app);
+        if (newFile.is_open())
+        {
+            newFile.clear();
+            newFile.seekg(0, ios::end);
+            cursor = taskList.begin();
+            if (newFile.tellg() == 0)    // If file is empty save right away
+            {
+                newFile.close();
+                newFile.open(filename, ios:: out | ios::trunc);
+                while (cursor != taskList.end())
+                {
+                    newFile << cursor->taskName;
+                    newFile << ',';
+                    newFile << cursor->dueMonth;
+                    newFile << '/';
+                    newFile << cursor->dueDay;
+                    newFile << ',';
+                    newFile << cursor->impact;
+                    newFile << ',';
+                    newFile << cursor->difficulty;
+                    newFile << '\n';
+                    cursor++;
+                }
+                currentFileName = Qfilename; //update current working file.
+                save_the_file = false;
+            }
+            else
+            {
+              QString garbage = QInputDialog::getText(this, "Save file", "Filename has contents. If you you like to overwrite it, press ok.", QLineEdit::Normal, null, &ok); //prompt user to name new file
+              if (ok)
+              { // If user does not hit cancel continue
+                garbage = null;
+                newFile.close();
+                newFile.open(filename, ios:: out | ios::trunc);
+                while (cursor != taskList.end())
+                {
+                    newFile << cursor->taskName;
+                    newFile << ',';
+                    newFile << cursor->dueMonth;
+                    newFile << '/';
+                    newFile << cursor->dueDay;
+                    newFile << ',';
+                    newFile << cursor->impact;
+                    newFile << ',';
+                    newFile << cursor->difficulty;
+                    newFile << '\n';
+                    cursor++;
+                }
+                currentFileName = Qfilename; //update current working file.
+                save_the_file = false;
+              }
+              else
+              {
+                  newFile.close(); //else user hit cancel
+                  return;
+              }
+        }
+     }
+     else
+     {
+        QMessageBox::information(this, "filename error", "Error opening file. ");
+        newFile.close();
+        return;
+     }
+  }
+ else //Else if user hits cancel
+ {
+   return;
+ }
 }
