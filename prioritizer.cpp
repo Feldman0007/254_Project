@@ -3,6 +3,8 @@
 #include <QtCore>
 #include <QtGui>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <fstream>
 
 
 
@@ -60,6 +62,7 @@ void Prioritizer::on_AddTask_clicked()
    Task newTask(stdString, month, day, importance, effort); //Create a new entry in the list
 
    taskList.push_back(newTask);
+   save_the_file = true; // We've made a change to the list so we should prompt the user to save before creating a new file
    updateListDisplay();   //Update display on the gui
 }
 
@@ -77,6 +80,9 @@ void Prioritizer::on_RemoveTask_clicked()
            cursor++;
         }
         taskList.erase(cursor);
+        if (taskList.empty()){
+            save_the_file = false; //If the list is empty, we can safetly start a new file without worrying about saving work
+        }
         updateListDisplay();
    }
 }
@@ -225,6 +231,22 @@ void Prioritizer::sortList(int choice)
       break;
     }
 }
+
+void Prioritizer::on_SortList_clicked()
+{
+    if (taskList.empty()){
+        //do nothing
+    }
+    else{
+   int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1.Due Date; 2. Importance; 3. Difficulty");
+   while (choice > 3 || choice < 1){
+     choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Invalid Entry. Try Entering: 1 for Due Date; 2 for Importance; 3 for Difficulty");
+   }
+   sortList(choice);
+   updateListDisplay();
+   }
+}
+
 void Prioritizer::on_actionLoad_triggered()
 {
     bool loadComplete = false;
@@ -303,12 +325,60 @@ void Prioritizer::on_actionLoad_triggered()
     }
 }
 
-void Prioritizer::on_SortList_clicked()
+void Prioritizer::on_actionNew_triggered()
 {
-   int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1. by Due Date; 2. by Importance; 3. by Difficulty");
-   while (choice > 3 || choice < 1){
-     choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Invalid Entry. Try Entering: 1 for Due Date; 2 for Importance; 3 for Difficulty");
+    if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before creating the new file
+    {
+         int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+         while (choice > 3 || choice < 1)
+         {
+            choice = QInputDialog::getInt(this, "Current changes have not been saved", "Invalid Entry. Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+         }
+         if(choice == 1){
+            on_actionSave_triggered(); // Save current changes
+         }
+         else if(choice == 3){ // Cancel creating a new file
+           return;
+         }
+         save_the_file = false; //continue without saving changes
+    }
+
+    bool filenameOccupied = true; //used to see if the selected filename is already an existing file
+
+    fstream newFile;
+    QString Qfilename;
+    string filename;
+    while(filenameOccupied)
+    {
+        bool ok;
+        const QString null = "";
+        Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,null,&ok); //prompt user to name new file
+      if (ok){
+        filename = Qfilename.toStdString(); //fstream works with std::string so we must convert it
+        filename.append(".txt");
+
+        newFile.open(filename, ios::in | ios::out);
+        if (newFile.is_open()) //if file opened successfully, then it exists and we do not want to overwrite file contents.
+        {
+            QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
+            newFile.close();       
+        }
+        else{
+            newFile.open(filename, ios::out | ios::trunc); //if file failed to open, it does not exist and we can create a new file using the given filename
+            taskList.clear(); //Clear contents of the current list
+            updateListDisplay(); // clear the screen
+            filenameOccupied = false;
+            newFile.close();
+
+        }
+        }
+      else{
+          return;
+      }
    }
-   sortList(choice);
-   updateListDisplay();
+}
+
+void Prioritizer::on_actionSave_triggered()
+{
+
 }
