@@ -225,6 +225,83 @@ void Prioritizer::sortList(int choice)
       break;
     }
 }
+void Prioritizer::on_actionLoad_triggered()
+{
+    bool loadComplete = false;
+
+
+    fstream newFile;
+    QString Qfilename;
+    string filename;
+
+    bool ok;
+
+    while(!loadComplete)
+    {
+      Qfilename = QInputDialog::getText(this, "Load Existing File", "Enter the name of the file you'd like load", QLineEdit::Normal,".txt",&ok); //prompt user to name new file
+      if (ok)
+      { // If user does not hit cancel continue
+        filename = Qfilename.toStdString(); //fstream works with std::string so we must convert it
+        newFile.open(filename, ios::in | ios::out);
+        if (newFile.is_open()) //if file opened successfully we can continue to load it
+        {
+            if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before loading another file
+            {
+                 int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+                 while (choice > 3 || choice < 1)
+                 {
+                    choice = QInputDialog::getInt(this, "Current changes have not been saved", "Invalid Entry. Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel");
+                 }
+                 if(choice == 1){
+                     on_actionSave_triggered(); // Save current changes
+                 }
+                 else if(choice == 3){ // Cancel loading file
+                   return;
+                 }
+                 save_the_file = false; //continue without saving changes
+            }
+            taskList.clear();
+            Task temp;
+            stringstream stringToint; //used to convert string values into int values
+            string tempstr;
+
+            while(!newFile.eof())             //populate the list from existing file
+            {
+             std::getline(newFile, temp.taskName, ',');
+             std::getline(newFile, tempstr, '/');
+             stringToint << tempstr;
+             stringToint >> temp.dueMonth;
+             stringToint.clear();
+             std::getline(newFile, tempstr, ',');
+             stringToint << tempstr;
+             stringToint >> temp.dueDay;
+             stringToint.clear();
+             std::getline(newFile, tempstr, ',');
+             stringToint << tempstr;
+             stringToint >> temp.impact;
+             stringToint.clear();
+             std::getline(newFile, tempstr, '\n');
+             stringToint << tempstr;
+             stringToint >> temp.difficulty;
+             stringToint.clear();
+             taskList.push_back(temp);
+            }
+            taskList.pop_back(); //Fixes bug that would add extra empty task in loaded list
+            updateListDisplay();
+            currentFileName = Qfilename;
+            loadComplete = true;
+            newFile.close();
+        }
+        else{
+            QMessageBox::information(this, "filename error", "No file exists under specified name! ");
+        }
+      }
+      else
+      {
+        return;
+      }
+    }
+}
 
 void Prioritizer::on_SortList_clicked()
 {
