@@ -23,7 +23,7 @@ Prioritizer::~Prioritizer()
 
 void Prioritizer::on_AddTask_clicked()
 {
-/*///////////////////////////////////////////////////Get new assignment info//////////////////////////////////////////////////////////////////////////////////////////////////*/
+/*///////////////////////////////////////////////////Get new assignment info////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
    int month =  QInputDialog::getInt(this, "Due Date", "Enter the month it's due (MM):");                      //Get the month of the assignment's due date
    while (month > 12 || month < 1){
@@ -55,7 +55,7 @@ void Prioritizer::on_AddTask_clicked()
    }
 
 
-   /*///////////////////////////////////////////////////Add the Assignment to List and update display/////////////////////////////////////////////////////////////////////////////////////*/
+   /*///////////////////////////////////////////////////Add the Assignment to List and update display//////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
    string stdString = taskName.toStdString();  //convert taskName from a QString to a string so we can work with it in our list
 
@@ -66,7 +66,7 @@ void Prioritizer::on_AddTask_clicked()
    updateListDisplay();   //Update display on the gui
 }
 
-/*////////////////////////////////////////////Remove task then update the display//////////////////////////////////////////////////////////////////////////////////////////////*/
+/*////////////////////////////////////////////Remove task then update the display///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_RemoveTask_clicked()
 {
    if (taskList.empty()){/*If there are no tasks to remove, do nothing*/}
@@ -78,17 +78,17 @@ void Prioritizer::on_RemoveTask_clicked()
              choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
         }
         cursor = taskList.begin();
-        for (int taskNum = 1;  taskNum != choice; taskNum++ )
+        for (int taskNum = 1;  taskNum != choice; taskNum++ ) //move to the task we wish to remove
         {
            cursor++;
         }
-        taskList.erase(cursor);
-        save_the_file = true;
+        taskList.erase(cursor); // erase that task
+        save_the_file = true;   // since we have made a change we set the save file flag on
         if (taskList.empty())
         {
             save_the_file = false; //If the list is empty, we can safely start a new file without worrying about saving work
         }
-        updateListDisplay();
+        updateListDisplay(); //update the display to reflect the change
    }
 }
  /*///////////////////////////////////////////////////Update the list display //////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -97,7 +97,7 @@ void Prioritizer::updateListDisplay(){
     ui->dateOutput->clear();
     ui->importanceOutput->clear();
     ui->difficultyOutput->clear();
-    ui->taskOutput->setAlignment(Qt::AlignLeft);
+    ui->taskOutput->setAlignment(Qt::AlignLeft); //formatting
     ui->dateOutput->setAlignment(Qt::AlignCenter);
     ui->importanceOutput->setAlignment(Qt::AlignCenter);
     ui->difficultyOutput->setAlignment(Qt::AlignCenter);
@@ -110,7 +110,7 @@ void Prioritizer::updateListDisplay(){
     QString q_updateText; //Used to update the gui display
 
    cursor = taskList.begin();
-   int taskNumber = 1;
+   int taskNumber = 1; //used to output the corresponding task number
    while (cursor != taskList.end()){            //Run through the entire list and echo the details of each task to the display
 
       output = std::to_string(taskNumber);   //Display the task number
@@ -137,46 +137,46 @@ void Prioritizer::updateListDisplay(){
       taskNumber++;
    }
 }
-
+   /*///////////////////////////////////////////////////Sort list by selected priority/////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::sortList(int choice)
 {
     list<Task> tempList; //will be used to temporarily hold the reorganized the list
-    list<Task>::iterator target; //we are targeting the task w/ the desired priority
+    list<Task>::iterator target; //this will point to the task we are targeting w/ the desired priority
 
     switch(choice){
-    case 1:
+    case 1: //Sort by Due Date
       while(!taskList.empty()){
         target = taskList.begin();
         for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
             if(target->dueMonth == cursor->dueMonth){ //If they have the same due month
-                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent due day
-                    target = cursor;
+                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent due date
+                    target = cursor; // it will currently be the target for the next item in the list
                 }
                 else if(target->impact < cursor->impact){ //if the duedates are the same proritize based on importance
                     target = cursor;
                 }
             }
-            else if(target->dueMonth > cursor->dueMonth){
-                target = cursor;
+            else if(target->dueMonth > cursor->dueMonth){ // if the current target has a later due date than the assignment we are observing
+                target = cursor; // update the target to the task we are observing
             }
-        }
+        }  // The target will be the next item in the list. Adding it to the list...
         Task temp;
         temp.taskName = target->taskName;
         temp.dueMonth = target->dueMonth;
         temp.dueDay = target->dueDay;
         temp.impact = target->impact;
         temp.difficulty = target->difficulty;
-        tempList.push_back(temp);
-        taskList.erase(target);
+        tempList.push_back(temp); // store target in temporary list
+        taskList.erase(target); // we don't want to resuse that target so we remove it from the remaining pool of assignments in the original list
        }
-     taskList = tempList;
-     tempList.clear();
+     taskList = tempList; //assign the sorted list back to the original list
+     tempList.clear(); //delete temporary list
         break;
-    case 2:
+    case 2: //Sort by impact on grade
         while(!taskList.empty()){
           target = taskList.begin();
           for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
-              if(target->impact == cursor->impact){  //If their difficulty is equal
+              if(target->impact == cursor->impact){  //If their impact is equal
                   if(target->dueMonth == cursor->dueMonth){  //Check which has a more immediate due date
                       if(target->dueDay > cursor->dueDay){
                           target = cursor;
@@ -202,7 +202,7 @@ void Prioritizer::sortList(int choice)
        taskList = tempList;
        tempList.clear();
        break;
-    case 3:
+    case 3: //Sort by difficulty of the assignment
        while(!taskList.empty()){
          target = taskList.begin();
          for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
@@ -234,11 +234,11 @@ void Prioritizer::sortList(int choice)
       break;
     }
 }
-
+   /*///////////////////////////////////////////////////Sort List button handle/////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_SortList_clicked()
 {
     if (taskList.empty()){
-        //do nothing
+        //if list is empty do nothing
     }
     else{
    int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1.Due Date; 2. Importance; 3. Difficulty");
@@ -249,17 +249,17 @@ void Prioritizer::on_SortList_clicked()
    updateListDisplay();
    }
 }
-
+   /*///////////////////////////////////////////////////Load File button handle/////////////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_actionLoad_triggered()
 {
-    bool loadComplete = false;
+    bool loadComplete = false; // Flag variable that determines whether the file was successfully loaded
 
 
-    fstream newFile;
-    QString Qfilename;
-    string filename;
+    fstream newFile; //Will handle reading and writing from the specified file
+    QString Qfilename;  //Will hold the filename the user enters
+    string filename; // string version of the filename so that it may be used with std file operations
 
-    bool ok;
+    bool ok; // will be used to handle user's selection on the popup dialogue
 
     while(!loadComplete)
     {
@@ -313,35 +313,36 @@ void Prioritizer::on_actionLoad_triggered()
             }
             taskList.pop_back(); //Fixes bug that would add extra empty task in loaded list
             updateListDisplay();
-            currentFileName = Qfilename;
-            loadComplete = true;
+            currentFileName = Qfilename; // update current working file
+            loadComplete = true; // mark the flag as true
             newFile.close();
         }
-        else{
+        else
+        {
             QMessageBox::information(this, "filename error", "No file exists under specified name! ");
         }
       }
-      else
+      else //The user hit cancel
       {
         return;
       }
     }
 }
-
+   /*///////////////////////////////////////////////////Create new file button handle/////////////////////////////////////////////////////////////////////////////////////*/
 
 void Prioritizer::on_actionNew_triggered()
 {
-    bool filenameOccupied = false; //used as a flag to see if the selected filename is already an existing file
+    bool filenameOccupied = true; //used as a flag to see if the selected filename is already an existing file
 
     fstream newFile;
     QString Qfilename;
     string filename;
 
 
-    const QString null = "";//ok and null are used to handle the user pressing cancel on the create new file dialog box                            \/
+    const QString null = ""; //ok and null are used to handle the user pressing cancel on the create new file dialog box                            \/
     bool ok;
 
-    while(!filenameOccupied)
+    while(filenameOccupied)
     {
       Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,null,&ok); //prompt user to name new file
       if (ok) // If user does not hit cancel continue
@@ -374,7 +375,7 @@ void Prioritizer::on_actionNew_triggered()
                 currentFileName = Qfilename; //update current working file.
                 taskList.clear(); //Clear contents of the current list
                 updateListDisplay(); // clear the display
-                filenameOccupied = true;
+                filenameOccupied = false;
                 newFile.close();
             }
             else // else it exists and we do not want to overwrite file contents.
@@ -394,7 +395,7 @@ void Prioritizer::on_actionNew_triggered()
       }
    }
 }
-
+   /*///////////////////////////////////////////////////Save file button handle/////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_actionSave_triggered()
 {
     fstream newFile;
@@ -419,7 +420,7 @@ void Prioritizer::on_actionSave_triggered()
             {
                 newFile.close();
                 newFile.open(filename, ios:: out | ios::trunc);
-                while (cursor != taskList.end())
+                while (cursor != taskList.end()) // Save contents of the list to a file in the required format
                 {
                     newFile << cursor->taskName;
                     newFile << ',';
@@ -434,9 +435,9 @@ void Prioritizer::on_actionSave_triggered()
                     cursor++;
                 }
                 currentFileName = Qfilename; //update current working file.
-                save_the_file = false;
+                save_the_file = false; //turn of the save flag
             }
-            else
+            else //Selected filename has contents, prompt user to overwrite
             {
               QString garbage = QInputDialog::getText(this, "Save file", "Filename has contents. If you you like to overwrite it, press ok.", QLineEdit::Normal, null, &ok); //prompt user to name new file
               if (ok)
@@ -444,7 +445,7 @@ void Prioritizer::on_actionSave_triggered()
                 garbage = null;
                 newFile.close();
                 newFile.open(filename, ios:: out | ios::trunc);
-                while (cursor != taskList.end())
+                while (cursor != taskList.end()) // Save contents of the list to a file in the required format
                 {
                     newFile << cursor->taskName;
                     newFile << ',';
