@@ -17,4 +17,4 @@ Alexander Feldman: feldman0007@csu.fullerton.edu
 > QT5 software and libraries were primarily used to develop our project, which are licensed under the GPL and LGPLv3 license, so our project must be published under the same license as it is a derivative work of this software.
 
 ### Build Compatibility
-> Our application runs on Windows + Linux.
+> Our application runs on Windows + Linux + MacOS
