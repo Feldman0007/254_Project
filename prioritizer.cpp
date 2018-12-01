@@ -26,7 +26,8 @@ void Prioritizer::on_AddTask_clicked()
 /*///////////////////////////////////////////////////Get new assignment info////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
    QString taskName = QInputDialog::getText(this, "Assignment name", "Enter the name of the assignment:");         //Get the name for the new assignment
    int month =  QInputDialog::getInt(this, "Due Date", "Enter the month it's due (MM):");                      //Get the month of the assignment's due date
-   while (month > 12 || month < 1){
+   while (month > 12 || month < 1)
+   {
        month =  QInputDialog::getInt(this, "Due Date", "Invalid entry. Retry inputing the month it's due (MM):");     //Input validation
    }
    int day =  QInputDialog::getInt(this, "Due Date", "Enter the day it's due (DD):");               //Get the day of the assignment's due date
@@ -73,22 +74,22 @@ void Prioritizer::on_RemoveTask_clicked()
    else
    {
         int choice =  QInputDialog::getInt(this, "Remove Task", "Enter the number of the task you'd like to remove: "); //If choice greater than list size
-        while (unsigned(choice) > taskList.size() || choice < 1)
-        {
-             choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
-        }
-        cursor = taskList.begin();
-        for (int taskNum = 1;  taskNum != choice; taskNum++ ) //move to the task we wish to remove
-        {
-           cursor++;
-        }
-        taskList.erase(cursor); // erase that task
-        save_the_file = true;   // since we have made a change we set the save file flag on
-        if (taskList.empty())
-        {
-            save_the_file = false; //If the list is empty, we can safely start a new file without worrying about saving work
-        }
-        updateListDisplay(); //update the display to reflect the change
+            while (unsigned(choice) > taskList.size() || choice < 1)
+            {
+                 choice =  QInputDialog::getInt(this, "Remove Task", "Not a valid task number, try again.");
+            }
+            cursor = taskList.begin();
+            for (int taskNum = 1;  taskNum != choice; taskNum++ ) //move to the task we wish to remove
+            {
+               cursor++;
+            }
+            taskList.erase(cursor); // erase that task
+            save_the_file = true;   // since we have made a change we set the save file flag on
+            if (taskList.empty())
+            {
+                save_the_file = false; //If the list is empty, we can safely start a new file without worrying about saving work
+            }
+            updateListDisplay(); //update the display to reflect the change
    }
 }
  /*///////////////////////////////////////////////////Update the list display //////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -101,7 +102,7 @@ void Prioritizer::updateListDisplay(){
     ui->dateOutput->setAlignment(Qt::AlignCenter);
     ui->importanceOutput->setAlignment(Qt::AlignCenter);
     ui->difficultyOutput->setAlignment(Qt::AlignCenter);
-    ui->taskOutput->append("Task");                 //  Place Headings
+    ui->taskOutput->append("Assignment");                 //  Place Headings
     ui->dateOutput->append("Due Date");
     ui->importanceOutput->append("Importance");
     ui->difficultyOutput->append("Difficulty");
@@ -147,14 +148,19 @@ void Prioritizer::sortList(int choice)
     case 1: //Sort by Due Date
       while(!taskList.empty()){
         target = taskList.begin();
-        for (cursor = taskList.begin(); cursor != taskList.end(); cursor++){
-            if(target->dueMonth == cursor->dueMonth){ //If they have the same due month
-                if(target->dueDay > cursor->dueDay){ //Prioritize that which has the more recent due date
+        for (cursor = taskList.begin(); cursor != taskList.end(); cursor++)
+        {
+            if(target->dueMonth == cursor->dueMonth)
+            { //If they have the same due month
+                if(target->dueDay > cursor->dueDay)
+                { //Prioritize that which has the more recent due date
                     target = cursor; // it will currently be the target for the next item in the list
                 }
-                else if(target->impact < cursor->impact){ //if the duedates are the same proritize based on importance
+               /* else if(target->impact < cursor->impact)
+                { //if the duedates are the same proritize based on importance
                     target = cursor;
                 }
+                */
             }
             else if(target->dueMonth > cursor->dueMonth){ // if the current target has a later due date than the assignment we are observing
                 target = cursor; // update the target to the task we are observing
@@ -237,16 +243,19 @@ void Prioritizer::sortList(int choice)
    /*///////////////////////////////////////////////////Sort List button handle/////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_SortList_clicked()
 {
-    if (taskList.empty()){
+    if (taskList.empty())
+    {
         //if list is empty do nothing
     }
-    else{
-   int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1.Due Date; 2. Importance; 3. Difficulty");
-   while (choice > 3 || choice < 1){
-     choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Invalid Entry. Try Entering: 1 for Due Date; 2 for Importance; 3 for Difficulty");
-   }
-   sortList(choice);
-   updateListDisplay();
+    else
+    {
+       int choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Enter: 1.Due Date; 2. Importance; 3. Difficulty");
+           while (choice > 3 || choice < 1)
+           {
+             choice = QInputDialog::getInt(this, "Select an attribute to prioritize by", "Invalid Entry. Try Entering: 1 for Due Date; 2 for Importance; 3 for Difficulty");
+           }
+       sortList(choice);
+       updateListDisplay();
    }
 }
    /*///////////////////////////////////////////////////Load File button handle/////////////////////////////////////////////////////////////////////////////////////////////*/
