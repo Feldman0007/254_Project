@@ -1,0 +1,12 @@
+CPSC 311 Research Paper,11/15,8,10
+CPSC 311 Proposal,11/8,3,5
+CPSC 254 Homework,11/12,3,6
+CPSC 254 Project,12/16,10,7
+CPSC 240 Quiz,11/28,5,6
+CPSC 240 Homework,11/26,3,5
+Math 270B Test,12/5,6,8
+Math 270B Quiz,11/30,3,4
+Math 270B Homework,11/29,4,3
+Java Online Reading Quiz,11/30,5,3
+Java Online Homework,11/29,4,3
+Java Project Submission,12/16,4,5
