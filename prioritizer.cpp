@@ -387,10 +387,11 @@ void Prioritizer::on_actionNew_triggered()
                      newFile.close();
             }
             else // else it is an existing file and we do not want to overwrite file contents.
-                {
-                  QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
+            {
+              newFile.close();
+              QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
 
-                }
+            }
         }
         else
         {
