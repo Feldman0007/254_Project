@@ -290,6 +290,7 @@ void Prioritizer::on_actionLoad_triggered()
             if (save_the_file) //If the current file has changes, prompt the user whether or not to save their progress before loading another file
             {
                  int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving;",0,1,2,1,&ok);
+                 if (!ok)
                  {
                      newFile.close(); //Cancel button hit
                      return;
@@ -298,6 +299,7 @@ void Prioritizer::on_actionLoad_triggered()
                      on_actionSave_triggered(); // Save current changes
                  }
             }
+            save_the_file = false; //continue without saving
             taskList.clear();
             Task temp;
             stringstream stringToint; //used to convert string values into int values
@@ -328,7 +330,6 @@ void Prioritizer::on_actionLoad_triggered()
             updateListDisplay();
             currentFileName = Qfilename; // update current working file
             loadComplete = true; // Save complete. Mark the flag as true.
-            save_the_file = false; //initally set to false since we have not made changes to the loaded file
             newFile.close();
         }
         else
@@ -378,12 +379,11 @@ void Prioritizer::on_actionNew_triggered()
                         on_actionSave_triggered(); // Save current changes
                      }
                 }
-                     save_the_file = false; //we have made our decision regarding save option           }
+                     save_the_file = false; //continue without saving
                      currentFileName = Qfilename; //update current working file.
                      taskList.clear(); //Clear contents of the current list
                      updateListDisplay(); // clear the display
                      filenameOccupied = false;
-                     save_the_file = false;
                      newFile.close();
             }
             else // else it is an existing file and we do not want to overwrite file contents.
