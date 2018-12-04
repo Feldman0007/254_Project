@@ -287,9 +287,9 @@ void Prioritizer::on_actionLoad_triggered()
         newFile.open(filename, ios::in | ios::out);
         if (newFile.is_open()) //if file opened successfully we can continue to load it
         {
-            if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before loading another file
+            if (save_the_file) //If the current file has changes, prompt the user whether or not to save their progress before loading another file
             {
-                 int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel",0,1,3,1,&ok);
+                 int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving;",0,1,2,1,&ok);
                  {
                      newFile.close(); //Cancel button hit
                      return;
@@ -297,12 +297,6 @@ void Prioritizer::on_actionLoad_triggered()
                  if (choice == 1){
                      on_actionSave_triggered(); // Save current changes
                  }
-                 else if(choice == 3)
-                 { // Cancel loading file
-                   newFile.close();
-                   return;
-                 }
-                 save_the_file = false; //continue without saving changes
             }
             taskList.clear();
             Task temp;
@@ -334,6 +328,7 @@ void Prioritizer::on_actionLoad_triggered()
             updateListDisplay();
             currentFileName = Qfilename; // update current working file
             loadComplete = true; // Save complete. Mark the flag as true.
+            save_the_file = false; //initally set to false since we have not made changes to the loaded file
             newFile.close();
         }
         else
@@ -356,7 +351,7 @@ void Prioritizer::on_actionNew_triggered()
 
     while(filenameOccupied)
     {
-        Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,"",&ok); //prompt user to name new file
+        Qfilename = QInputDialog::getText(this, "Create a new file", "Enter the name of the new task list you'd like to create", QLineEdit::Normal,".txt",&ok); //prompt user to name new file
         if (!ok)
             {
               return;
@@ -371,9 +366,9 @@ void Prioritizer::on_actionNew_triggered()
             {
                 newFile.close();
                 newFile.open(filename, ios::out | ios::trunc);
-                if (save_the_file) //If the current file has changes, prompt the user whether of not to save their progress before creating the new file
+                if (save_the_file) //If the current file has changes, prompt the user whether or not to save their progress before creating the new file
                 {
-                     int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving; 3. Cancel",0,1,3,1,&ok);
+                     int choice = QInputDialog::getInt(this, "Current changes have not been saved", "Enter: 1. Save Changes; 2. Continue without saving;",0,1,2,1,&ok);
                      if(!ok)
                      {
                          newFile.close();
@@ -382,29 +377,27 @@ void Prioritizer::on_actionNew_triggered()
                      if(choice == 1){
                         on_actionSave_triggered(); // Save current changes
                      }
-                     else if(choice == 3){ // Cancel creating a new file
-                       newFile.close();
-                       return;
-                     }
+                }
                      save_the_file = false; //we have made our decision regarding save option           }
                      currentFileName = Qfilename; //update current working file.
                      taskList.clear(); //Clear contents of the current list
                      updateListDisplay(); // clear the display
                      filenameOccupied = false;
+                     save_the_file = false;
                      newFile.close();
-                }
-                else // else it exists and we do not want to overwrite file contents.
+            }
+            else // else it is an existing file and we do not want to overwrite file contents.
                 {
                   QMessageBox::information(this, "filename error", "Your selected filename is already used by an existing file! ");
+
                 }
-            }
         }
         else
         {
-        QMessageBox::information(this, "file error", "Error opening file!");
+        QMessageBox::information(this, "file error", "Error opening file or filename DNE!");
         return;
         }
-  }
+    }
 }
    /*///////////////////////////////////////////////////Save file button handle/////////////////////////////////////////////////////////////////////////////////////*/
 void Prioritizer::on_actionSave_triggered()
