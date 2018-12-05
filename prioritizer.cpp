@@ -1,3 +1,11 @@
+/*
+*   Prioritizer. List implementation that uses sorting to achieve goal.
+*   Goal: Given a list of Task objects, sort the list by user's choice.
+*   Other Features: Save/load/create file of Tasks. Remove + add items to list. 
+*   Define functions for program
+*   
+*/
+
 #include "prioritizer.h"
 #include "ui_prioritizer.h"
 #include <QtCore>
@@ -8,7 +16,7 @@
 #include <sstream>
 
 
-
+/*Constructor*/
 Prioritizer::Prioritizer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Prioritizer)
@@ -16,6 +24,7 @@ Prioritizer::Prioritizer(QWidget *parent) :
     ui->setupUi(this);
 }
 
+/*Destructor*/
 Prioritizer::~Prioritizer()
 {
     delete ui;

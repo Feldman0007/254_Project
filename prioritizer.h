@@ -1,3 +1,8 @@
+/*
+*   Prioritizer header.
+*   Declare functions for program + define private variables
+*/
+
 #ifndef PRIORITIZER_H
 #define PRIORITIZER_H
 #include "tasklist.h"
@@ -34,11 +39,11 @@ private slots:
     void on_actionSave_triggered();
 
 private:
-    Ui::Prioritizer *ui;    // initializes the gui
-    list<Task> taskList;    // taskList will be a list of all tasks entered by the user so that they may be re-organized to help in prioritizing tasks
-    list<Task>::iterator cursor;        // this iterator will be used to cycle through the contents of the current assignment list
-    bool save_the_file = false;      //flag variables that wll be used for saving, loading, and creating new files
-    QString currentFileName = "";    // this variable will keep track of the current working file
+    Ui::Prioritizer *ui;            // initialize GUI
+    list<Task> taskList;            // the list of all tasks entered by the user
+    list<Task>::iterator cursor;    // iterates/moves through the list taskList
+    bool save_the_file = false;     // flag action variables (saving, loading, and creating new files, etc.)
+    QString currentFileName = "";   // the current working file
 };
 
 #endif // PRIORITIZER_H

@@ -1,5 +1,14 @@
 # 254_Project
 
+
+### Professor README please!
+Notice: Project is meant to be executed in QT Creator Application. Submission of this code is for viewing purposes only. 
+
+prioritizer.cpp, prioritizer.h, and taskList.h is the code that our members wrote, and is what drives the program.
+
+prioritizer.pro + prioritizer.ui is used to help us build the GUI implementation, of which the code is automated for us. 
+
+
 ### Group Members:
 
 Stacey Frasier: stacey726@csu.fullerton.edu
